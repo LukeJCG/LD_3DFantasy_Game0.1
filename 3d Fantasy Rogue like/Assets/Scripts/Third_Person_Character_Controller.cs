@@ -43,11 +43,11 @@ public class Third_Person_Character_Controller : MonoBehaviour
         if (Input.anyKeyDown == true)
         {
             Key_Held = true;
-            Debug.Log("Im working");
         }
 
-        if (Input.anyKeyDown == true && Key_Held == true)
+        if (Input.anyKeyDown == true && Key_Held == false)
         {
+            Debug.Log("Im working");
             Key_Held = false;
         }
 
