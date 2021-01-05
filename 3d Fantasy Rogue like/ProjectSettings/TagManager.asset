@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Floor
+  - Is_Trigger_Collider
   layers:
   - Default
   - TransparentFX

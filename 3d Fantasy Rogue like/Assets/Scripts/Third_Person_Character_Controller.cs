@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class Third_Person_Character_Controller : MonoBehaviour
 {
-    public float Speed;
-    public bool Is_Grounded;
-    public bool Jumping;
     public Rigidbody rb;
     public Animator Player_Animator;
+    public GameObject Player;
     public Quaternion Left;
     public Quaternion Right;
     public Quaternion Forward;
     public Quaternion Back;
+    public float Speed;
     public float xPosition;
     public float zPosition;
+    public bool Player_Has_Collided_With_Wall;
+    public bool Is_Grounded;
+    public bool Jumping;
     public bool walking;
+    public bool Key_Held;
 
     private void Start()
     {
@@ -23,12 +26,59 @@ public class Third_Person_Character_Controller : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         xPosition = rb.transform.position.x;
         zPosition = rb.transform.position.z;
-        PlayerMovement();
         Speed = 1f;
+    }
+
+    private void Update()
+    {
+        Left = Quaternion.Euler(0f, -90f, 0f);
+        Right = Quaternion.Euler(0f, 90f, 0f);
+        Forward = Quaternion.Euler(0f, -180f, 0f);
+        Back = Quaternion.Euler(0f, 0f, 0f);
+
+        if (Input.anyKeyDown == true)
+        {
+            Key_Held = true;
+            Debug.Log("Im working");
+        }
+
+        if (Input.anyKeyDown == true && Key_Held == true)
+        {
+            Key_Held = false;
+        }
+
+        if (Key_Held == true && Jumping == false)
+        {
+            PlayerMovement();
+            PlayerJump_Rotation();
+        }
+
+        if (Key_Held == true && Jumping == true)
+        {
+            PlayerJump_Rotation();
+        }
+
+        Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
+
+        if (walking == false && Jumping == false)
+        {
+            Player_Animator.Play("Idle");
+        }
+    }
+
+    private void PlayerMovement()
+    {
+        // Move the player in all positions relevant to key press on the vertical axis.
+        var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        transform.position += Move * Speed * Time.deltaTime;
+    }
+
+    private void PlayerJump_Rotation()
+    {
 
         if (Jumping == true)
         {
@@ -45,44 +95,29 @@ public class Third_Person_Character_Controller : MonoBehaviour
         {
             walking = false;
         }
-    }
 
-    public void Update()
-    {
-        Left = Quaternion.Euler(0f, -90f, 0f);
-        Right = Quaternion.Euler(0f, 90f, 0f);
-        Forward = Quaternion.Euler(0f, -180f, 0f);
-        Back = Quaternion.Euler(0f, 0f, 0f);
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit))
-        {
-
-        }
-
-        if (xPosition > rb.transform.position.x)
+        if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false && Key_Held == true)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Speed);
             Player_Animator.Play("Walking");
             walking = true;
         }
 
-        if (xPosition < rb.transform.position.x)
+        if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false && Key_Held == true)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Speed);
             Player_Animator.Play("Walking");
             walking = true;
         }
 
-        if (zPosition > rb.transform.position.z)
+        if (zPosition > rb.transform.position.z && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Forward, Speed);
             Player_Animator.Play("Walking");
             walking = true;
         }
 
-        if (zPosition < rb.transform.position.z)
+        if (zPosition < rb.transform.position.z && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Back, Speed);
             Player_Animator.Play("Walking");
@@ -97,19 +132,6 @@ public class Third_Person_Character_Controller : MonoBehaviour
             Player_Animator.Play("Jump");
             Player_Animator.Play("Jump", 0, 0);
         }
-
-        if (walking == false && Jumping == false)
-        {
-            Player_Animator.Play("Idle");
-        }
-
-    }
-
-    void PlayerMovement()
-    {
-        // Move the player in all positions relevant to key press on the vertical axis.
-        var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        transform.position += Move * Speed * Time.deltaTime;
     }
 
     void OnCollisionEnter(Collision theCollision)

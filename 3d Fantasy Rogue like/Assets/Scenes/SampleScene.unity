@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 59411817}
   - component: {fileID: 59411816}
   m_Layer: 0
-  m_Name: Cube (10)
+  m_Name: LOOK AT ME LUKE
   m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,7 +210,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 15.24, y: -9.594, z: 1.86}
   m_LocalScale: {x: 0.5787968, y: 0.69820476, z: 1.7196196}
-  m_Children: []
+  m_Children:
+  - {fileID: 609973384}
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -766,7 +767,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 492278214}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.9648, y: -9.671, z: 0.3627}
+  m_LocalPosition: {x: 15.9648, y: -9.671, z: 0.124}
   m_LocalScale: {x: 4.4960856, y: 0.31067997, z: 0.9184116}
   m_Children: []
   m_Father: {fileID: 0}
@@ -865,6 +866,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &609973383
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 609973384}
+  - component: {fileID: 609973385}
+  m_Layer: 0
+  m_Name: Is_Trigger_Collider
+  m_TagString: Is_Trigger_Collider
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &609973384
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609973383}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 59411819}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &609973385
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609973383}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.1552309, y: 0.9238267, z: 1.0470742}
+  m_Center: {x: 0.0003328322, y: -0.038087085, z: -0.00035243842}
 --- !u!1 &702257878
 GameObject:
   m_ObjectHideFlags: 0
@@ -1210,17 +1255,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99901005aed35314fb5431326ae9a44e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 0
-  Is_Grounded: 0
-  Jumping: 0
   rb: {fileID: 751849002}
   Player_Animator: {fileID: 751849000}
+  Player: {fileID: 751848999}
   Left: {x: 0, y: 0, z: 0, w: 0}
   Right: {x: 0, y: 0, z: 0, w: 0}
   Forward: {x: 0, y: 0, z: 0, w: 0}
   Back: {x: 0, y: 0, z: 0, w: 0}
+  Speed: 0
   xPosition: 0
   zPosition: 0
+  Player_Has_Collided_With_Wall: 0
+  Is_Grounded: 0
+  Jumping: 0
   walking: 0
 --- !u!54 &751849002
 Rigidbody:
@@ -1257,6 +1304,19 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1176500119}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &751849006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751848999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76af1a5f89049f47b01520ff96cc7fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player_Has_Collided_With_Wall: 0
 --- !u!1001 &1176500119
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1427,13 +1487,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1343185141}
-  m_LocalRotation: {x: 0.5579552, y: 0, z: 0, w: 0.8298711}
-  m_LocalPosition: {x: 15.85, y: -8.35, z: 1.19}
+  m_LocalRotation: {x: 0.40526962, y: -0, z: -0, w: 0.91419727}
+  m_LocalPosition: {x: 15.85, y: -8.364, z: 0.777}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 67.829, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 47.816, y: 0, z: 0}
 --- !u!1 &1407820959
 GameObject:
   m_ObjectHideFlags: 0
