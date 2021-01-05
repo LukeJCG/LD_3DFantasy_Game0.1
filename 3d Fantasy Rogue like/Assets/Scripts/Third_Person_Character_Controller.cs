@@ -31,6 +31,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
         xPosition = rb.transform.position.x;
         zPosition = rb.transform.position.z;
         Speed = 1f;
+
     }
 
     private void Update()
@@ -40,52 +41,54 @@ public class Third_Person_Character_Controller : MonoBehaviour
         Forward = Quaternion.Euler(0f, -180f, 0f);
         Back = Quaternion.Euler(0f, 0f, 0f);
 
-        if (Input.anyKeyDown == true)
+        if (Input.GetKeyDown("w") || Input.GetKeyDown("a") || Input.GetKeyDown("s") || Input.GetKeyDown("d"))
         {
+            Debug.Log("Press");
+            var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            transform.position += Move * Speed * Time.deltaTime;
+
+            Player_Jump_Rotation();
+            Player_Animator.Play("Walking");
             Key_Held = true;
         }
 
-        if (Input.anyKeyDown == true && Key_Held == false)
+        if (Input.GetKeyUp("w") || Input.GetKeyUp("a") || Input.GetKeyUp("s") || Input.GetKeyUp("d"))
         {
-            Debug.Log("Im working");
             Key_Held = false;
-        }
-
-        if (Key_Held == true && Jumping == false)
-        {
-            PlayerMovement();
-            PlayerJump_Rotation();
-        }
-
-        if (Key_Held == true && Jumping == true)
-        {
-            PlayerJump_Rotation();
         }
 
         Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
 
-        if (walking == false && Jumping == false)
+        if (Key_Held == false)
         {
             Player_Animator.Play("Idle");
         }
+
+        Jump();
     }
 
-    private void PlayerMovement()
-    {
-        // Move the player in all positions relevant to key press on the vertical axis.
-        var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        transform.position += Move * Speed * Time.deltaTime;
-    }
 
-    private void PlayerJump_Rotation()
+    private void Jump()
     {
-
-        if (Jumping == true)
+        if (Input.GetKeyDown("space") && Is_Grounded == true)
         {
+            Jumping = true;
+            rb.velocity = new Vector3(0, 0.5f, 0);
+            //Player_Animator.SetTrigger("Jump");
+            Player_Animator.Play("Jump");
+            Player_Animator.Play("Jump", 0, 0);
             var Move = new Vector3(Input.GetAxis("Horizontal"), 2, Input.GetAxis("Vertical"));
             transform.position += Move * Speed * Time.deltaTime;
         }
 
+        //if (Is_Grounded == true && Jumping == true)
+        //{
+        //    Jumping = false;
+        //}
+    }
+
+    private void Player_Jump_Rotation()
+    {
         if (zPosition == rb.transform.position.z)
         {
             walking = false;
@@ -99,38 +102,25 @@ public class Third_Person_Character_Controller : MonoBehaviour
         if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false && Key_Held == true)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Speed);
-            Player_Animator.Play("Walking");
             walking = true;
         }
 
         if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false && Key_Held == true)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Speed);
-            Player_Animator.Play("Walking");
             walking = true;
         }
 
         if (zPosition > rb.transform.position.z && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Forward, Speed);
-            Player_Animator.Play("Walking");
             walking = true;
         }
 
         if (zPosition < rb.transform.position.z && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Back, Speed);
-            Player_Animator.Play("Walking");
             walking = true;
-        }
-
-        if (Input.GetKeyDown("space") && Is_Grounded == true)
-        {
-            Jumping = true;
-            rb.velocity = new Vector3(0, 0.5f, 0);
-            //Player_Animator.SetTrigger("Jump");
-            Player_Animator.Play("Jump");
-            Player_Animator.Play("Jump", 0, 0);
         }
     }
 
