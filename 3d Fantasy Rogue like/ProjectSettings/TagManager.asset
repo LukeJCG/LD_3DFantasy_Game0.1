@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Floor
   - Is_Trigger_Collider
+  - Weapon
   layers:
   - Default
   - TransparentFX
