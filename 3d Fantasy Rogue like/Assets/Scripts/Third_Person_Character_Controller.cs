@@ -18,7 +18,6 @@ public class Third_Person_Character_Controller : MonoBehaviour
     public bool Is_Grounded;
     public bool Jumping;
     public bool walking;
-    public bool Key_Held;
 
     private void Start()
     {
@@ -30,65 +29,16 @@ public class Third_Person_Character_Controller : MonoBehaviour
     {
         xPosition = rb.transform.position.x;
         zPosition = rb.transform.position.z;
-        Speed = 1f;
+        Speed = 0.5f;
 
-    }
+        Move();
 
-    private void Update()
-    {
-        Left = Quaternion.Euler(0f, -90f, 0f);
-        Right = Quaternion.Euler(0f, 90f, 0f);
-        Forward = Quaternion.Euler(0f, -180f, 0f);
-        Back = Quaternion.Euler(0f, 0f, 0f);
-
-        if (Input.GetKeyDown("w") || Input.GetKeyDown("a") || Input.GetKeyDown("s") || Input.GetKeyDown("d"))
+        if (Jumping == true)
         {
-            Debug.Log("Press");
-            var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            transform.position += Move * Speed * Time.deltaTime;
-
-            Player_Jump_Rotation();
-            Player_Animator.Play("Walking");
-            Key_Held = true;
-        }
-
-        if (Input.GetKeyUp("w") || Input.GetKeyUp("a") || Input.GetKeyUp("s") || Input.GetKeyUp("d"))
-        {
-            Key_Held = false;
-        }
-
-        Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
-
-        if (Key_Held == false)
-        {
-            Player_Animator.Play("Idle");
-        }
-
-        Jump();
-    }
-
-
-    private void Jump()
-    {
-        if (Input.GetKeyDown("space") && Is_Grounded == true)
-        {
-            Jumping = true;
-            rb.velocity = new Vector3(0, 0.5f, 0);
-            //Player_Animator.SetTrigger("Jump");
-            Player_Animator.Play("Jump");
-            Player_Animator.Play("Jump", 0, 0);
             var Move = new Vector3(Input.GetAxis("Horizontal"), 2, Input.GetAxis("Vertical"));
             transform.position += Move * Speed * Time.deltaTime;
         }
 
-        //if (Is_Grounded == true && Jumping == true)
-        //{
-        //    Jumping = false;
-        //}
-    }
-
-    private void Player_Jump_Rotation()
-    {
         if (zPosition == rb.transform.position.z)
         {
             walking = false;
@@ -98,14 +48,60 @@ public class Third_Person_Character_Controller : MonoBehaviour
         {
             walking = false;
         }
+    }
 
-        if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false && Key_Held == true)
+    private void Update()
+    {
+        Left = Quaternion.Euler(0f, -90f, 0f);
+        Right = Quaternion.Euler(0f, 90f, 0f);
+        Forward = Quaternion.Euler(0f, -180f, 0f);
+        Back = Quaternion.Euler(0f, 0f, 0f);
+
+        Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
+
+        Jump();
+        Player_Jump_Rotation();
+
+        if (Input.GetKeyDown("w") || Input.GetKeyDown("a") || Input.GetKeyDown("s") || Input.GetKeyDown("d"))
+        {
+            Player_Animator.Play("Walking");
+        }
+
+        if (Input.GetKeyUp("w") || Input.GetKeyUp("a") || Input.GetKeyUp("s") || Input.GetKeyUp("d"))
+        {
+            Player_Animator.Play("Idle");
+        }
+
+    }
+
+    private void Jump()
+    {
+        if (Input.GetKeyDown("space") && Is_Grounded == true)
+        {
+            Jumping = true;
+            rb.velocity = new Vector3(0, 0.5f, 0);
+            Player_Animator.Play("Jump");
+            var Move = new Vector3(Input.GetAxis("Horizontal"), 2, Input.GetAxis("Vertical"));
+            transform.position += Move * Speed * Time.deltaTime;
+        }
+    }
+
+    private void Move()
+    {
+        var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        transform.position += Move * Speed * Time.deltaTime;
+    }
+
+    private void Player_Jump_Rotation()
+    {
+
+        if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Speed);
             walking = true;
         }
 
-        if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false && Key_Held == true)
+        if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Speed);
             walking = true;

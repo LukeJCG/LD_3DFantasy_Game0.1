@@ -1869,7 +1869,6 @@ MonoBehaviour:
   Is_Grounded: 0
   Jumping: 0
   walking: 0
-  Key_Held: 0
 --- !u!54 &751849002
 Rigidbody:
   m_ObjectHideFlags: 0
