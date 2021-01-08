@@ -17,13 +17,11 @@ public class Third_Person_Character_Controller : MonoBehaviour
     public float xPosition;
     public float zPosition;
     public bool Player_Has_Collided_With_Wall;
-    public bool Is_Grounded;
     public bool Jumping;
     public bool walking;
 
     private void Start()
     {
-        Is_Grounded = true;
         rb = GetComponent<Rigidbody>();
     }
 
@@ -37,7 +35,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         if (Jumping == true)
         {
-            var Move = new Vector3(Input.GetAxis("Horizontal"), 1.5f, Input.GetAxis("Vertical"));
+            var Move = new Vector3(Input.GetAxis("Horizontal"), 1.9f, Input.GetAxis("Vertical"));
             transform.position += Move * Speed * Time.deltaTime;
         }
 
@@ -61,12 +59,12 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
 
-        if (Input.GetKeyDown("w") || Input.GetKeyDown("a") || Input.GetKeyDown("s") || Input.GetKeyDown("d"))
+        if (Input.GetKeyDown("w") && Jumping == false|| Input.GetKeyDown("a") && Jumping == false|| Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("a") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("d") && Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("s") && Input.GetKeyDown("a") && Jumping == false)
         {
             Player_Animator.Play("Walking");
         }
 
-        if (Input.GetKeyUp("w") || Input.GetKeyUp("a") || Input.GetKeyUp("s") || Input.GetKeyUp("d"))
+        if (!Input.anyKey && Jumping == false)
         {
             Player_Animator.Play("Idle");
         }
@@ -100,6 +98,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
             Jumping = true;
             rb.velocity = new Vector3(0, 1f, 0);
             Player_Animator.Play("Jump");
+            Player_Animator.Play("Jump", 0, 0);
         }
 
         //RaycastHit hit;
@@ -126,19 +125,9 @@ public class Third_Person_Character_Controller : MonoBehaviour
     void OnCollisionEnter(Collision theCollision)
     {
         //Check the player to see if they are colliding with the floor.
-        if (theCollision.gameObject.tag == "Floor" && Player_Has_Collided_With_Wall == false)
-        {
-            Is_Grounded = true;
-            Jumping = false;
-        }
-    }
-
-    void OnCollisionExit(Collision theCollision)
-    {
-        //Check the player to see if they aren't colliding with the floor.
         if (theCollision.gameObject.tag == "Floor")
         {
-            Is_Grounded = false;
+            Jumping = false;
         }
     }
 }
