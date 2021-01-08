@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Third_Person_Character_Controller : MonoBehaviour
 {
@@ -14,15 +15,21 @@ public class Third_Person_Character_Controller : MonoBehaviour
     public Quaternion Forward;
     public Quaternion Back;
     public float Speed;
+    public float Rotation_Speed;
     public float xPosition;
     public float zPosition;
     public bool Player_Has_Collided_With_Wall;
     public bool Jumping;
     public bool walking;
+    public Camera Camera;
+    //public Text Action_Text;
+    //public bool Found_Sword;
+    //public bool Sword_Equipped;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        //Found_Sword = false;
     }
 
     private void FixedUpdate()
@@ -30,6 +37,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
         xPosition = rb.transform.position.x;
         zPosition = rb.transform.position.z;
         Speed = 0.8f;
+        Rotation_Speed = 2.5f;
 
         Move();
 
@@ -59,7 +67,8 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
 
-        if (Input.GetKeyDown("w") && Jumping == false|| Input.GetKeyDown("a") && Jumping == false|| Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("a") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("d") && Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("s") && Input.GetKeyDown("a") && Jumping == false)
+
+        if (Input.GetKeyDown("w") && Jumping == false || Input.GetKeyDown("a") && Jumping == false || Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("a") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("d") && Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("s") && Input.GetKeyDown("a") && Jumping == false)
         {
             Player_Animator.Play("Walking");
         }
@@ -71,25 +80,25 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Speed);
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
 
         if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Speed);
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
 
-        if (zPosition > rb.transform.position.z && Player_Has_Collided_With_Wall == false && Jumping == false)
+        if (zPosition > rb.transform.position.z && Jumping == false)
         {
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Forward, Speed);
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Forward, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
 
-        if (zPosition < rb.transform.position.z && Player_Has_Collided_With_Wall == false && Jumping == false)
+        if (zPosition < rb.transform.position.z && Jumping == false)
         {
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Back, Speed);
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Back, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
 
@@ -101,25 +110,33 @@ public class Third_Person_Character_Controller : MonoBehaviour
             Player_Animator.Play("Jump", 0, 0);
         }
 
+        //if (Found_Sword == false)
+        //{
+        //    Action_Text.text = "";
+        //}
+
+        //if (Found_Sword == true && Input.GetKeyDown("e"))
+        //{
+        //    Sword.transform.position = Weapon_Spawn.transform.position;
+        //    Sword.transform.parent = Weapon_Spawn.transform;
+        //}
+
         //RaycastHit hit;
 
         //if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit))
         //{
-        //    if (hit.collider.tag == "Weapon")
+        //    if (hit.collider.name == "Sword")
         //    {
-        //        Debug.Log("I found the sword");
-        //        Sword.transform.position = Weapon_Spawn.transform.position;
-        //        //parent the sword to the weapon spawn
-
         //    }
-        //}
 
+        //}
     }
 
     private void Move()
     {
         var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         transform.position += Move * Speed * Time.deltaTime;
+        Camera.transform.position += Move * Speed * Time.deltaTime;
     }
 
     void OnCollisionEnter(Collision theCollision)
@@ -130,4 +147,22 @@ public class Third_Person_Character_Controller : MonoBehaviour
             Jumping = false;
         }
     }
+
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.gameObject.tag == "Weapon")
+    //    {
+    //        Debug.Log("Sword is here");
+    //        Action_Text.text = "Press e to pickup the sword.";
+    //        Found_Sword = true;
+    //    }
+
+    //}
+    //void OnTriggerExit(Collider other)
+    //{
+    //    if (other.gameObject.tag == "Weapon")
+    //    {
+    //        Found_Sword = false;
+    //    }
+    //}
 }
