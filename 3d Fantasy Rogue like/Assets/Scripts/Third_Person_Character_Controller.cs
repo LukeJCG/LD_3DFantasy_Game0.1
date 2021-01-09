@@ -105,7 +105,8 @@ public class Third_Person_Character_Controller : MonoBehaviour
         if (Input.GetKeyDown("space") && Jumping == false)
         {
             Jumping = true;
-            rb.velocity = new Vector3(0, 1f, 0);
+            rb.velocity += new Vector3(0, 1f, 0);
+            //Camera.transform.position = new Vector3(0, 1f, 0);
             Player_Animator.Play("Jump");
             Player_Animator.Play("Jump", 0, 0);
         }
