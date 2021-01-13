@@ -39,6 +39,11 @@ public class Third_Person_Character_Controller : MonoBehaviour
         Speed = 0.8f;
         Rotation_Speed = 2.5f;
 
+        if (Player_Has_Collided_With_Wall == false)
+        {
+            Move_Camera();
+        }
+
         Move();
 
         if (Jumping == true)
@@ -56,6 +61,8 @@ public class Third_Person_Character_Controller : MonoBehaviour
         {
             walking = false;
         }
+
+        //Camera.transform.rotation = rb.transform.rotation;
     }
 
     private void Update()
@@ -67,8 +74,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
 
-
-        if (Input.GetKeyDown("w") && Jumping == false || Input.GetKeyDown("a") && Jumping == false || Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("a") && Jumping == false || Input.GetKeyDown("w") && Input.GetKeyDown("d") && Jumping == false || Input.GetKeyDown("d") && Input.GetKeyDown("s") && Jumping == false || Input.GetKeyDown("s") && Input.GetKeyDown("a") && Jumping == false)
+        if (Input.GetKey("w") && Jumping == false || Input.GetKey("a") && Jumping == false || Input.GetKey("s") && Jumping == false || Input.GetKey("d") && Jumping == false || Input.GetKey("w") && Input.GetKey("a") && Jumping == false || Input.GetKey("w") && Input.GetKey("d") && Jumping == false || Input.GetKey("d") && Input.GetKey("s") && Jumping == false || Input.GetKey("s") && Input.GetKey("a") && Jumping == false)
         {
             Player_Animator.Play("Walking");
         }
@@ -133,11 +139,16 @@ public class Third_Person_Character_Controller : MonoBehaviour
         //}
     }
 
+    private void Move_Camera()
+    {
+        var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Camera.transform.position += Move * Speed * Time.deltaTime;
+    }
+
     private void Move()
     {
         var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         transform.position += Move * Speed * Time.deltaTime;
-        Camera.transform.position += Move * Speed * Time.deltaTime;
     }
 
     void OnCollisionEnter(Collision theCollision)
