@@ -39,11 +39,6 @@ public class Third_Person_Character_Controller : MonoBehaviour
         Speed = 0.8f;
         Rotation_Speed = 2.5f;
 
-        if (Player_Has_Collided_With_Wall == false)
-        {
-            Move_Camera();
-        }
-
         Move();
 
         if (Jumping == true)
@@ -62,7 +57,6 @@ public class Third_Person_Character_Controller : MonoBehaviour
             walking = false;
         }
 
-        //Camera.transform.rotation = rb.transform.rotation;
     }
 
     private void Update()
@@ -72,8 +66,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
         Forward = Quaternion.Euler(0f, -180f, 0f);
         Back = Quaternion.Euler(0f, 0f, 0f);
 
-        Camera.transform.Rotate(Player.transform.position, Speed * Time.deltaTime);
-        Camera.transform.position = rb.transform.position + new Vector3(0, 2, -1);
+        //Camera.transform.Rotate(rb.transform.position, Speed * Time.deltaTime);
 
         Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
 
@@ -84,29 +77,34 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         if (!Input.anyKey && Jumping == false)
         {
+
             Player_Animator.Play("Idle");
         }
 
         if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
+            Debug.Log("Im turning left");
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
 
         if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
+            Debug.Log("Im turning right");
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
 
         if (zPosition > rb.transform.position.z && Jumping == false)
         {
+            Debug.Log("Im looking forward");
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Forward, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
 
         if (zPosition < rb.transform.position.z && Jumping == false)
         {
+            Debug.Log("Im looking back");
             rb.transform.rotation = Quaternion.Slerp(transform.rotation, Back, Rotation_Speed * Time.deltaTime);
             walking = true;
         }
@@ -115,7 +113,6 @@ public class Third_Person_Character_Controller : MonoBehaviour
         {
             Jumping = true;
             rb.velocity += new Vector3(0, 1f, 0);
-            //Camera.transform.position = new Vector3(0, 1f, 0);
             Player_Animator.Play("Jump");
             Player_Animator.Play("Jump", 0, 0);
         }
@@ -142,16 +139,11 @@ public class Third_Person_Character_Controller : MonoBehaviour
         //}
     }
 
-    private void Move_Camera()
-    {
-        var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        //Camera.transform.position += Move * Speed * Time.deltaTime;
-    }
-
     private void Move()
     {
         var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         transform.position += Move * Speed * Time.deltaTime;
+        Camera.transform.position = rb.transform.position + new Vector3(0, 4, -2);
     }
 
     void OnCollisionEnter(Collision theCollision)
