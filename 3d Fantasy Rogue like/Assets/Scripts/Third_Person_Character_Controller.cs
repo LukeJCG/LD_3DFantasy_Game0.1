@@ -72,6 +72,9 @@ public class Third_Person_Character_Controller : MonoBehaviour
         Forward = Quaternion.Euler(0f, -180f, 0f);
         Back = Quaternion.Euler(0f, 0f, 0f);
 
+        Camera.transform.Rotate(Player.transform.position, Speed * Time.deltaTime);
+        Camera.transform.position = rb.transform.position + new Vector3(0, 2, -1);
+
         Player_Has_Collided_With_Wall = Player.GetComponent<Player_Collision>().Player_Has_Collided_With_Wall;
 
         if (Input.GetKey("w") && Jumping == false || Input.GetKey("a") && Jumping == false || Input.GetKey("s") && Jumping == false || Input.GetKey("d") && Jumping == false || Input.GetKey("w") && Input.GetKey("a") && Jumping == false || Input.GetKey("w") && Input.GetKey("d") && Jumping == false || Input.GetKey("d") && Input.GetKey("s") && Jumping == false || Input.GetKey("s") && Input.GetKey("a") && Jumping == false)
@@ -142,7 +145,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
     private void Move_Camera()
     {
         var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        Camera.transform.position += Move * Speed * Time.deltaTime;
+        //Camera.transform.position += Move * Speed * Time.deltaTime;
     }
 
     private void Move()
