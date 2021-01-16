@@ -36,8 +36,8 @@ public class Third_Person_Character_Controller : MonoBehaviour
     {
         xPosition = rb.transform.position.x;
         zPosition = rb.transform.position.z;
-        Speed = 0.8f;
-        Rotation_Speed = 2.5f;
+        Speed = 1.5f;
+        Rotation_Speed = 3f;
 
         Move();
 
