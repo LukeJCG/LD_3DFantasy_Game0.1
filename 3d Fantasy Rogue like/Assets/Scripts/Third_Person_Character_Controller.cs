@@ -10,6 +10,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
     public GameObject Player;
     public GameObject Sword;
     public GameObject Weapon_Spawn;
+    public Camera Camera;
     public Quaternion Left;
     public Quaternion Right;
     public Quaternion Forward;
@@ -20,8 +21,6 @@ public class Third_Person_Character_Controller : MonoBehaviour
     public float zPosition;
     public bool Player_Has_Collided_With_Wall;
     public bool Jumping;
-    public bool walking;
-    public Camera Camera;
     //public Text Action_Text;
     //public bool Found_Sword;
     //public bool Sword_Equipped;
@@ -43,20 +42,29 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         if (Jumping == true)
         {
-            var Move = new Vector3(Input.GetAxis("Horizontal"), 1.9f, Input.GetAxis("Vertical"));
+            var Move = new Vector3(Input.GetAxis("Horizontal"), 2.5f, Input.GetAxis("Vertical"));
             transform.position += Move * Speed * Time.deltaTime;
         }
 
-        if (zPosition == rb.transform.position.z)
+        if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
-            walking = false;
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Rotation_Speed * Time.deltaTime);
         }
 
-        if (xPosition == rb.transform.position.x)
+        if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
         {
-            walking = false;
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Rotation_Speed * Time.deltaTime);
         }
 
+        if (zPosition > rb.transform.position.z && Jumping == false)
+        {
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Forward, Rotation_Speed * Time.deltaTime);
+        }
+
+        if (zPosition < rb.transform.position.z && Jumping == false)
+        {
+            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Back, Rotation_Speed * Time.deltaTime);
+        }
     }
 
     private void Update()
@@ -77,44 +85,27 @@ public class Third_Person_Character_Controller : MonoBehaviour
 
         if (!Input.anyKey && Jumping == false)
         {
-
             Player_Animator.Play("Idle");
         }
 
-        if (xPosition > rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
-        {
-            Debug.Log("Im turning left");
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Left, Rotation_Speed * Time.deltaTime);
-            walking = true;
-        }
-
-        if (xPosition < rb.transform.position.x && Player_Has_Collided_With_Wall == false && Jumping == false)
-        {
-            Debug.Log("Im turning right");
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Right, Rotation_Speed * Time.deltaTime);
-            walking = true;
-        }
-
-        if (zPosition > rb.transform.position.z && Jumping == false)
-        {
-            Debug.Log("Im looking forward");
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Forward, Rotation_Speed * Time.deltaTime);
-            walking = true;
-        }
-
-        if (zPosition < rb.transform.position.z && Jumping == false)
-        {
-            Debug.Log("Im looking back");
-            rb.transform.rotation = Quaternion.Slerp(transform.rotation, Back, Rotation_Speed * Time.deltaTime);
-            walking = true;
-        }
-
-        if (Input.GetKeyDown("space") && Jumping == false)
+        if (Input.GetKeyDown("space"))
         {
             Jumping = true;
             rb.velocity += new Vector3(0, 1f, 0);
             Player_Animator.Play("Jump");
             Player_Animator.Play("Jump", 0, 0);
+        }
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, transform.TransformDirection(0, -0.3f, 0), out hit))
+        {
+            if (hit.collider.tag == "Floor")
+            {
+                Vector3 down = transform.TransformDirection(0, -0.3f, 0);
+                Debug.DrawRay(transform.position, down, Color.red);
+                Jumping = false;
+            }
         }
 
         //if (Found_Sword == false)
@@ -137,6 +128,7 @@ public class Third_Person_Character_Controller : MonoBehaviour
         //    }
 
         //}
+
     }
 
     private void Move()
@@ -144,15 +136,6 @@ public class Third_Person_Character_Controller : MonoBehaviour
         var Move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         transform.position += Move * Speed * Time.deltaTime;
         Camera.transform.position = rb.transform.position + new Vector3(0, 4, -2);
-    }
-
-    void OnCollisionEnter(Collision theCollision)
-    {
-        //Check the player to see if they are colliding with the floor.
-        if (theCollision.gameObject.tag == "Floor")
-        {
-            Jumping = false;
-        }
     }
 
     //void OnTriggerEnter(Collider other)
